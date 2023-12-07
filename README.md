@@ -6,7 +6,7 @@ My solutions for [Advent of Code challenges 2023](https://adventofcode.com/2023)
 
 Copyright © 2023 by Christian Jaeggi.
 
-Before I start I want to give a big shout-out to [Todd Ginsberg](https://github.com/tginsberg/advent-2020-kotlin) whose solutions are very concise as well as idiomatic to read.
+Before I start I want to give a big shout-out to [Todd Ginsberg](https://github.com/tginsberg/advent-2023-kotlin) whose solutions are very concise as well as idiomatic to read.
 His repos are always very inspirational! I learned a lot from him.
 
 My solutions this year are not well tested as in previous years and also not that easily to use.
