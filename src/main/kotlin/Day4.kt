@@ -4,7 +4,7 @@ class Day4() {
         for (i in 1..202) {
             copies[i] = 1
         }
-        execFileByLine("./src/main/kotlin/input4.txt") {
+        execFileByLine("inputs/input4.txt") {
             val arr = it.split(":")
             val cardNo = arr.first().split("Card").last()
                 .filterNot { it.isWhitespace() }.toInt()
@@ -33,7 +33,7 @@ class Day4() {
 
     fun solveFirst() {
         var sum = 0
-        execFileByLine("./src/main/kotlin/input4.txt") {
+        execFileByLine("inputs/input4.txt") {
             val arr = it.split(":")
             val winningNumbersString = arr.last().split("|").first()
             val myNumbersString = arr.last().split("|").last()

@@ -10,6 +10,8 @@ Before I start I want to give a big shout-out to [Todd Ginsberg](https://github.
 His repos are always very inspirational! I learned a lot from him.
 
 My solutions this year are not well tested as in previous years and also not that easily to use.
+Sometimes only solution 2 is implemented in the code.
+
 Just use the main class and execute either the appropriate function of the earlier days or the `solve` functions in the according `Day` classes.
 
 **Enjoy!**

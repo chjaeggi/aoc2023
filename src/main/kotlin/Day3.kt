@@ -10,7 +10,7 @@ class Day3() {
         val numbers = "[0-9]+".toRegex()
         val numbersByLine = mutableMapOf<Coords, Int>()
         val twoD = array2dOfChar(140, 140)
-        execFileByLine("./src/main/kotlin/input3.txt") {
+        execFileByLine("inputs/input3.txt") {
             numbers.findAll(it).forEach {
                 numbersByLine[Coords(it.range, line)] = it.value.toInt()
             }
@@ -70,7 +70,7 @@ class Day3() {
         val numbers = "[0-9]+".toRegex()
         val numbersByLine = mutableMapOf<Coords, Int>()
         val twoD = array2dOfChar(140, 140)
-        execFileByLine("./src/main/kotlin/input3.txt") {
+        execFileByLine("inputs/input3.txt") {
             numbers.findAll(it).forEach {
                 numbersByLine[Coords(it.range, line)] = it.value.toInt()
             }

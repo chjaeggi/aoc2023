@@ -1,7 +1,7 @@
 fun day2() {
     var sum = 0
 
-    execFileByLine("./src/main/kotlin/input2.txt") {
+    execFileByLine("inputs/input2.txt") {
         var minRed = -1
         var minGreen = -1
         var minBlue = -1

@@ -1,15 +1,16 @@
 import java.lang.IllegalArgumentException
 
-private data class CamelCards(val hand: String, val bid: Int, val type: TYPES = TYPES.Unknown)
-private val myCards = mutableListOf<CamelCards>()
+private data class CamelCards(val hand: String, val bid: Int, val type: TYPES = TYPES.HighCard)
+
 private enum class TYPES {
-    FiveOfAKind, FourOfAKind, FullHouse, ThreeOfAKind, TwoPair, OnePair, HighCard, Unknown
+    FiveOfAKind, FourOfAKind, FullHouse, ThreeOfAKind, TwoPair, OnePair, HighCard
 }
 
 class Day7 {
+    private val myCards = mutableListOf<CamelCards>()
 
     fun solve(considerJokers: Boolean): Int {
-        execFileByLine("./src/main/kotlin/input7.txt") {
+        execFileByLine("inputs/input7.txt") {
             val split = it.split(" ")
             myCards.add(
                 CamelCards(
@@ -43,16 +44,20 @@ class Day7 {
             1 -> TYPES.FiveOfAKind
             2 -> {
                 if (amountPerCard.values.any { it == 1 }) {
-                    return TYPES.FourOfAKind
+                    TYPES.FourOfAKind
+                } else {
+                    TYPES.FullHouse
                 }
-                return TYPES.FullHouse
             }
+
             3 -> {
                 if (amountPerCard.values.any { it == 3 }) {
-                    return TYPES.ThreeOfAKind
+                    TYPES.ThreeOfAKind
+                } else {
+                    TYPES.TwoPair
                 }
-                return TYPES.TwoPair
             }
+
             4 -> TYPES.OnePair
             else -> TYPES.HighCard
         }
@@ -98,6 +103,7 @@ class Day7 {
             'J' -> {
                 if (!considerJokers) 4 else 14
             }
+
             'T' -> 5
             '9' -> 6
             '8' -> 7

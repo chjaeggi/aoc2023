@@ -24,7 +24,7 @@ fun day1() {
         "thgie" to 8,
         "enin" to 9,
     )
-    execFileByLine("./src/main/kotlin/input1.txt") {
+    execFileByLine("inputs/input1.txt") {
         val first = numWords.findAll(it).first().value
         val last = numWordsRev.findAll(it.reversed()).first().value
 
