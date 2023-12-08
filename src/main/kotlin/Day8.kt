@@ -7,14 +7,14 @@ class Day8 {
     private val instructions = mutableListOf<Char>()
     private val nodes = mutableMapOf<String, Pair<String, String>>()
 
-    fun solveFirst() : Int {
+    fun solveFirst(): Int {
         parseInput(instructions, nodes)
-        return findNumberOfSteps(nodes)
+        return findNumberOfSteps()
     }
 
     suspend fun solveSecond(): Long {
         parseInput(instructions, nodes)
-        return findNumberOfStepsParallel(nodes)
+        return findNumberOfStepsParallel()
     }
 
     private fun parseInput(
@@ -41,9 +41,7 @@ class Day8 {
         }
     }
 
-    private fun findNumberOfSteps(
-        nodes: Map<String, Pair<String, String>>
-    ): Int {
+    private fun findNumberOfSteps(): Int {
         var current = "AAA"
         var instructionCounter = -1
         var steps = 0
@@ -63,14 +61,12 @@ class Day8 {
         return steps
     }
 
-    private suspend fun findNumberOfStepsParallel(
-        nodes: Map<String, Pair<String, String>>
-    ): Long {
+    private suspend fun findNumberOfStepsParallel(): Long {
         val current = nodes.filter { it.key.endsWith("A") }.toMutableMap()
         var hasFoundAll = false
         var instructionCounter = -1
         var steps = 0
-        val finalStepsPerNode = mutableListOf<Int>()
+        val stepsPerNode = mutableListOf<Int>()
 
         while (!hasFoundAll) {
             steps++
@@ -78,52 +74,48 @@ class Day8 {
             if (instructionCounter > instructions.lastIndex) {
                 instructionCounter = 0
             }
-            val resultsPerStep = getNextNodeForEachCurrent(current, instructionCounter)
-            val finishedNodes = getFinishedNodes(resultsPerStep, finalStepsPerNode, steps)
-            resultsPerStep.removeAll(finishedNodes)
-
-            if (resultsPerStep.isEmpty()) {
+            val nextNodes = current.waitForAll(instructions[instructionCounter])
+            if (nextNodes.removeFinishedNodes()) {
+                stepsPerNode.add(steps)
+            }
+            if (nextNodes.isEmpty()) {
                 hasFoundAll = true
                 continue
             }
-            setNextNode(current, resultsPerStep, nodes)
+            current.replaceWithNext(nextNodes)
         }
-        return finalStepsPerNode.lcm()
+        return stepsPerNode.lcm()
     }
 
-    private fun setNextNode(
-        current: MutableMap<String, Pair<String, String>>,
-        resultsPerStep: MutableList<String>,
-        nodes: Map<String, Pair<String, String>>
+    // manipulate next nodes to consider from base input
+    private fun MutableMap<String, Pair<String, String>>.replaceWithNext(
+        nextNodes: MutableList<String>
     ) {
-        current.clear()
-        resultsPerStep.forEach {
-            current[it] = nodes[it]!!
+        this.clear()
+        nextNodes.forEach {
+            this[it] = nodes[it]!!
         }
     }
 
-    private fun getFinishedNodes(
-        resultsPerStep: MutableList<String>,
-        finalStepsPerNode: MutableList<Int>,
-        steps: Int
-    ): MutableList<String> {
+    // manipulate list and return whether elements have been removed
+    private fun MutableList<String>.removeFinishedNodes(): Boolean {
         val toBeRemoved = mutableListOf<String>()
-        for (res in resultsPerStep) {
+        for (res in this) {
             if (res.endsWith("Z")) {
-                finalStepsPerNode.add(steps)
                 toBeRemoved.add(res)
             }
         }
-        return toBeRemoved
+        this.removeAll(toBeRemoved)
+        return toBeRemoved.isNotEmpty()
     }
 
-    private suspend fun getNextNodeForEachCurrent(
-        current: MutableMap<String, Pair<String, String>>,
-        instructionCounter: Int
+    // check for each node to be travelled in parallel and return only when all have been processed
+    private suspend fun MutableMap<String, Pair<String, String>>.waitForAll(
+        instruction: Char,
     ) = coroutineScope {
-        current.map { entry ->
+        map { entry ->
             async {
-                if (instructions[instructionCounter] == 'L') {
+                if (instruction == 'L') {
                     entry.value.first
                 } else {
                     entry.value.second
