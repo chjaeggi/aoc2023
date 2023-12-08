@@ -12,7 +12,7 @@ class Day8 {
         return findNumberOfSteps()
     }
 
-    suspend fun solveSecond(): Long {
+    fun solveSecond(): Long {
         parseInput(instructions, nodes)
         return findNumberOfStepsParallel()
     }
@@ -61,7 +61,7 @@ class Day8 {
         return steps
     }
 
-    private suspend fun findNumberOfStepsParallel(): Long {
+    private fun findNumberOfStepsParallel(): Long {
         val current = nodes.filter { it.key.endsWith("A") }.toMutableMap()
         var hasFoundAll = false
         var instructionCounter = -1
@@ -110,17 +110,12 @@ class Day8 {
     }
 
     // check for each node to be travelled in parallel and return only when all have been processed
-    private suspend fun MutableMap<String, Pair<String, String>>.waitForAll(
-        instruction: Char,
-    ) = coroutineScope {
+    private fun MutableMap<String, Pair<String, String>>.waitForAll(instruction: Char) =
         map { entry ->
-            async {
-                if (instruction == 'L') {
-                    entry.value.first
-                } else {
-                    entry.value.second
-                }
+            if (instruction == 'L') {
+                entry.value.first
+            } else {
+                entry.value.second
             }
-        }.awaitAll()
-    }.toMutableList()
+        }.toMutableList()
 }
