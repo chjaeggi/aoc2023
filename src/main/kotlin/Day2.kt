@@ -1,3 +1,5 @@
+import utils.execFileByLine
+
 fun day2() {
     var sum = 0
 

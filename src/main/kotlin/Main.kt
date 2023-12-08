@@ -1,4 +1,4 @@
-fun main() {
-    println(Day7().solve(false))
-    println(Day7().solve(true))
+suspend fun main() {
+    println(Day8().solveFirst())
+    println(Day8().solveSecond())
 }

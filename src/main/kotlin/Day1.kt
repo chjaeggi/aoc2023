@@ -1,3 +1,5 @@
+import utils.execFileByLine
+
 fun day1() {
     var sum = 0
     val numWords = "one|two|three|four|five|six|seven|eight|nine|[0-9]".toRegex()

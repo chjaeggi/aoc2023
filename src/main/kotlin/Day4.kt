@@ -1,3 +1,5 @@
+import utils.execFileByLine
+
 class Day4() {
     fun solveSecond() {
         val copies = mutableMapOf<Int, Int>()

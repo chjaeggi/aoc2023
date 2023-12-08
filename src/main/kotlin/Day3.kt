@@ -1,3 +1,5 @@
+import utils.execFileByLine
+
 class Day3() {
     fun solveFirst() {
         data class Coords(val range: IntRange, val line: Int)

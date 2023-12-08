@@ -1,3 +1,4 @@
+import utils.execFileByLine
 import java.lang.IllegalArgumentException
 
 private data class CamelCards(val hand: String, val bid: Int, val type: TYPES = TYPES.HighCard)
@@ -68,9 +69,11 @@ class Day7 {
         if (numberOfJ != null && numberOfJ != 5) {
             val maxNonJEntry = amountPerCard
                 .filter { it.key != 'J' }
-                .maxBy { it.value }
-            amountPerCard[maxNonJEntry.key] = amountPerCard[maxNonJEntry.key]!! + numberOfJ
-            amountPerCard.remove('J')
+                .maxByOrNull { it.value }
+            maxNonJEntry?.let {
+                amountPerCard[it.key] = amountPerCard[it.key]!! + numberOfJ
+                amountPerCard.remove('J')
+            }
         }
     }
 
