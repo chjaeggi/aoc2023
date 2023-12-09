@@ -27,3 +27,4 @@ Just use the main class and execute either the appropriate `solve` functions in 
 | 6   | Wait For It | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day6.kt) [\[AoC\]](http://adventofcode.com/2023/day/6) |
 | 7   | Camel Cards | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day7.kt) [\[AoC\]](http://adventofcode.com/2023/day/7) |
 | 8   | Haunted Wasteland | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day8.kt) [\[AoC\]](http://adventofcode.com/2023/day/8) |
+| 9   | Mirage Maintenance | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day9.kt) [\[AoC\]](http://adventofcode.com/2023/day/9) |
