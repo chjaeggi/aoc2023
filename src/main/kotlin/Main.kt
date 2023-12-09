@@ -1,4 +1,4 @@
 fun main() {
-    println(Day8().solveFirst())
-    println(Day8().solveSecond())
+    println(Day9().solveFirst())
+    println(Day9().solveSecond())
 }
