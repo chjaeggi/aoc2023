@@ -2,10 +2,17 @@ import utils.execFileByLineIndexed
 import utils.numberOfCharsPerLine
 import utils.numberOfLinesPerFile
 import java.lang.IllegalStateException
+import javax.sound.sampled.Port
 
 enum class Direction {
     NORTH, EAST, SOUTH, WEST, NONE
 }
+
+data class Point(
+    val x: Int,
+    val y: Int,
+    val reachedFrom: Direction,
+)
 
 class Day10 {
 
@@ -13,13 +20,6 @@ class Day10 {
 
     private var startX = -1
     private var startY = -1
-
-    private val oppositeDirections = mapOf(
-        Direction.NORTH to Direction.SOUTH,
-        Direction.SOUTH to Direction.NORTH,
-        Direction.EAST to Direction.WEST,
-        Direction.WEST to Direction.EAST,
-    )
     private var pipes =
         Array(numberOfLinesPerFile(fileName)) { CharArray(numberOfCharsPerLine(fileName)) }
     private var pipeCount = 1
@@ -41,7 +41,7 @@ class Day10 {
             }
 
         }
-        checkNext(startX, startY)
+        checkNext(Point(startX, startY, Direction.NONE))
         println("Solution 1: ${pipeCount / 2}")
 
         // part 2:
@@ -59,53 +59,45 @@ class Day10 {
         println("Solution 2: $insideCount")
     }
 
-    private fun checkNext(
-        x: Int,
-        y: Int,
-        direction: Direction = Direction.NONE
-    ) {
-        return if (startX == x && startY == y && pipeCount > 1) {
+    private tailrec fun checkNext(p: Point) {
+        if (startX == p.x && startY == p.y && pipeCount > 1) {
             return
         } else {
-            val next = visitNext(x, y, direction)
-            visited.add(next.first)
+            val next = visitNext(p)
+            visited.add(next.x to next.y)
             pipeCount++
-            checkNext(next.first.first, next.first.second, next.second)
+            checkNext(next)
         }
     }
 
-    private fun visitNext(
-        x: Int,
-        y: Int,
-        direction: Direction
-    ): Pair<Pair<Int, Int>, Direction> {
-        val currentPipe = pipes[y][x]
+    private fun visitNext(p: Point): Point {
+        val currentPipe = pipes[p.y][p.x]
 
-        if (y > 0 && oppositeDirections[direction] != Direction.NORTH) {
-            val nextPipe = pipes[y - 1][x]
+        if (p.y > 0 && p.reachedFrom != Direction.NORTH) {
+            val nextPipe = pipes[p.y - 1][p.x]
             if (currentPipe in "S|LJ" && nextPipe in "S|F7") {
-                return (x to y - 1) to Direction.NORTH
+                return Point(p.x, p.y - 1, Direction.SOUTH)
             }
         }
 
-        if (x < pipes[0].lastIndex && oppositeDirections[direction] != Direction.EAST) {
-            val nextPipe = pipes[y][x + 1]
+        if (p.x < pipes[0].lastIndex && p.reachedFrom != Direction.EAST) {
+            val nextPipe = pipes[p.y][p.x + 1]
             if (currentPipe in "S-FL" && nextPipe in "S-J7") {
-                return (x + 1 to y) to Direction.EAST
+                return Point(p.x + 1, p.y, Direction.WEST)
             }
         }
 
-        if (y < pipes.lastIndex && oppositeDirections[direction] != Direction.SOUTH) {
-            val nextPipe = pipes[y + 1][x]
+        if (p.y < pipes.lastIndex && p.reachedFrom != Direction.SOUTH) {
+            val nextPipe = pipes[p.y + 1][p.x]
             if (currentPipe in "S|F7" && nextPipe in "S|JL") {
-                return (x to y + 1) to Direction.SOUTH
+                return Point(p.x, p.y + 1, Direction.NORTH)
             }
         }
 
-        if (x > 0 && oppositeDirections[direction] != Direction.WEST) {
-            val nextPipe = pipes[y][x - 1]
+        if (p.x > 0 && p.reachedFrom != Direction.WEST) {
+            val nextPipe = pipes[p.y][p.x - 1]
             if (currentPipe in "S-7J" && nextPipe in "S-FL") {
-                return (x - 1 to y) to Direction.WEST
+                return Point(p.x - 1, p.y, Direction.EAST)
             }
         }
 
