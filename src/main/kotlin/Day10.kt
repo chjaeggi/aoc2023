@@ -46,7 +46,7 @@ class Day10 {
         println("Solution 1: ${pipeCount / 2}")
 
         // part 2:
-        pipes[startY][startX] = '7'
+        // this helped me a lot in part two: https://imgur.com/a/ukstWKO
         pipes.forEachIndexed { y, value ->
             isInside = false
             value.forEachIndexed { x, char ->
