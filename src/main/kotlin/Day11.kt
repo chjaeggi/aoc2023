@@ -25,9 +25,18 @@ class Day11 {
     }
 
     private fun createGalaxyMap(): GalaxyMap {
+
+        // TODO replace forEachIndexed calls with mapIndexed/flatMapIndexed Coni heeeelp and save
+        // their results directly into the according variables (make them immutable):
+        // - galaxies
+        // - emptyRows
+        // - emptyCols
+
         val fileName = "./inputs/input11.txt"
         val originalGalaxies =
             Array(numberOfLinesPerFile(fileName)) { CharArray(numberOfCharsPerLine(fileName)) }
+
+        val galaxies = mutableMapOf<GalaxyPoint, List<GalaxyPoint>>()
         val emptyRows = mutableListOf<Int>()
         val emptyCols = mutableListOf<Int>()
 
@@ -39,25 +48,23 @@ class Day11 {
                 emptyRows.add(index)
             }
         }
-        val galaxiesTransposed = originalGalaxies.transpose()
-        galaxiesTransposed.forEachIndexed { index, chars ->
+
+        originalGalaxies.transpose().forEachIndexed { index, chars ->
             if (chars.all { it == '.' }) {
                 emptyCols.add(index)
             }
         }
 
-        val galaxyCoords = originalGalaxies.flatMapIndexed { y, chars ->
-            chars.mapIndexed { x, c ->
+        val galaxyCoords = mutableListOf<GalaxyPoint>()
+        originalGalaxies.forEachIndexed { y, chars ->
+            chars.forEachIndexed { x, c ->
                 if (c == '#') {
-                    GalaxyPoint(y, x)
-                } else {
-                    null
+                    galaxyCoords.add(GalaxyPoint(y, x))
                 }
             }
-        }.filterNotNull()
+        }
 
-        val galaxies = mutableMapOf<GalaxyPoint, List<GalaxyPoint>>()
-        galaxyCoords.mapIndexed { index, point ->
+        galaxyCoords.forEachIndexed { index, point ->
             if (index < galaxyCoords.lastIndex) {
                 galaxies[point] = galaxyCoords.subList(index + 1, galaxyCoords.lastIndex + 1)
             }
@@ -67,6 +74,9 @@ class Day11 {
     }
 
     private fun solve(galaxies: GalaxyMap, voidMultiplier: Long = 2): Long {
+        val ySkip = galaxies.galaxyFreeCols
+        val xSkip = galaxies.galaxyFreeRows
+
         return galaxies.map.flatMap { galaxy ->
             val source = galaxy.key
             galaxy.value.map { dest ->
@@ -74,10 +84,8 @@ class Day11 {
                 val minY = minOf(dest.y, source.y)
                 val maxX = maxOf(dest.x, source.x)
                 val minX = minOf(dest.x, source.x)
-                val sumY =
-                    (galaxies.galaxyFreeCols.count { it in minY..<maxY } * (voidMultiplier - 1))
-                val sumX =
-                    (galaxies.galaxyFreeRows.count { it in minX..<maxX } * (voidMultiplier - 1))
+                val sumY = ySkip.count { it in minY..<maxY } * (voidMultiplier - 1)
+                val sumX = xSkip.count { it in minX..<maxX } * (voidMultiplier - 1)
                 abs(dest.y - source.y) + sumY + abs(dest.x - source.x) + sumX
             }
         }.sum()
