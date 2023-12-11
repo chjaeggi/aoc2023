@@ -7,7 +7,7 @@ enum class Direction {
     NORTH, EAST, SOUTH, WEST, NONE
 }
 
-data class Point(
+private data class ReachablePoint(
     val x: Int,
     val y: Int,
     val reachedFrom: Direction,
@@ -40,7 +40,7 @@ class Day10 {
             }
 
         }
-        checkNext(Point(startX, startY, Direction.NONE))
+        checkNext(ReachablePoint(startX, startY, Direction.NONE))
         println("Solution 1: ${pipeCount / 2}")
 
         // part 2:
@@ -58,7 +58,7 @@ class Day10 {
         println("Solution 2: $insideCount")
     }
 
-    private tailrec fun checkNext(p: Point) {
+    private tailrec fun checkNext(p: ReachablePoint) {
         if (startX == p.x && startY == p.y && pipeCount > 1) {
             return
         } else {
@@ -69,34 +69,34 @@ class Day10 {
         }
     }
 
-    private fun visitNext(p: Point): Point {
+    private fun visitNext(p: ReachablePoint): ReachablePoint {
         val currentPipe = pipes[p.y][p.x]
 
         if (p.y > 0 && p.reachedFrom != Direction.NORTH) {
             val nextPipe = pipes[p.y - 1][p.x]
             if (currentPipe in "S|LJ" && nextPipe in "S|F7") {
-                return Point(p.x, p.y - 1, Direction.SOUTH)
+                return ReachablePoint(p.x, p.y - 1, Direction.SOUTH)
             }
         }
 
         if (p.x < pipes[0].lastIndex && p.reachedFrom != Direction.EAST) {
             val nextPipe = pipes[p.y][p.x + 1]
             if (currentPipe in "S-FL" && nextPipe in "S-J7") {
-                return Point(p.x + 1, p.y, Direction.WEST)
+                return ReachablePoint(p.x + 1, p.y, Direction.WEST)
             }
         }
 
         if (p.y < pipes.lastIndex && p.reachedFrom != Direction.SOUTH) {
             val nextPipe = pipes[p.y + 1][p.x]
             if (currentPipe in "S|F7" && nextPipe in "S|JL") {
-                return Point(p.x, p.y + 1, Direction.NORTH)
+                return ReachablePoint(p.x, p.y + 1, Direction.NORTH)
             }
         }
 
         if (p.x > 0 && p.reachedFrom != Direction.WEST) {
             val nextPipe = pipes[p.y][p.x - 1]
             if (currentPipe in "S-7J" && nextPipe in "S-FL") {
-                return Point(p.x - 1, p.y, Direction.EAST)
+                return ReachablePoint(p.x - 1, p.y, Direction.EAST)
             }
         }
 
