@@ -5,6 +5,9 @@ import java.io.File
 import java.io.FileReader
 
 
+fun execFileByLine(number: Int, f: (str: String) -> Unit) =
+    File("./inputs/input$number.txt").forEachLine { f(it) }
+
 fun execFileByLine(fileName: String, f: (str: String) -> Unit) =
     File(fileName).forEachLine { f(it) }
 
