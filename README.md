@@ -33,3 +33,6 @@ function i.a.
 | 8   | Haunted Wasteland               | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day8.kt) [\[AoC\]](http://adventofcode.com/2023/day/8)   |
 | 9   | Mirage Maintenance              | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day9.kt) [\[AoC\]](http://adventofcode.com/2023/day/9)   |
 | 10  | Pipe Maze                       | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day10.kt) [\[AoC\]](http://adventofcode.com/2023/day/10) |
+| 11  | Cosmic Expansion                | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day11.kt) [\[AoC\]](http://adventofcode.com/2023/day/11) |
+| 12  | Hot Springs                     | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day12.kt) [\[AoC\]](http://adventofcode.com/2023/day/12) |
+| 13  | Point of Incidence              | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day13.kt) [\[AoC\]](http://adventofcode.com/2023/day/13) |
