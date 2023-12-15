@@ -85,81 +85,46 @@ class Day13 {
         var colSolution = 0
 
         patternRows.forEach { rowPattern ->
-            val maxNumber = rowPattern.size / 2 + 1
-            var found = false
-
-            // from top to bottom
-            for (i in 1..maxNumber) {
-                val arr1 = rowPattern.take(i)
-                val endIndex = if (2 * i >= rowPattern.size - 1) {
-                    rowPattern.size - 1
-                } else {
-                    2 * i
-                }
-                val arr2 = rowPattern.subList(i, endIndex).reversed()
-                if (diffBy(arr1, arr2) == 1) {
-                    rowSolution += (i) * 100
-                    found = true
-                    break
-                }
-            }
-
-            // from bottom to top
-            if (!found) {
-                for (i in 1..maxNumber) {
-                    val arr1 = rowPattern.reversed().take(i)
-                    val endIndex = if (2 * i >= rowPattern.size - 1) {
-                        rowPattern.size - 1
-                    } else {
-                        2 * i
-                    }
-                    val arr2 = rowPattern.reversed().subList(i, endIndex).reversed()
-                    if (diffBy(arr1, arr2) == 1) {
-                        rowSolution += (rowPattern.size - i) * 100
-                        break
-                    }
-                }
-            }
+            rowSolution += findMirror(rowPattern) * 100
         }
 
         patternCols.forEach { colPattern ->
-            val maxNumber = colPattern.size / 2 + 1
-            var found = false
-            // from top to bottom
-            for (i in 1..maxNumber) {
-                val arr1 = colPattern.take(i)
-                val endIndex = if (2 * i >= colPattern.size - 1) {
-                    colPattern.size - 1
-                } else {
-                    2 * i
-                }
-                val arr2 = colPattern.subList(i, endIndex).reversed()
-                if (diffBy(arr1, arr2) == 1) {
-                    colSolution += i
-                    found = true
-                    break
-                }
-            }
-
-            // from bottom to top
-            if (!found) {
-                for (i in 1..maxNumber) {
-                    val arr1 = colPattern.reversed().take(i)
-                    val endIndex = if (2 * i >= colPattern.size - 1) {
-                        colPattern.size - 1
-                    } else {
-                        2 * i
-                    }
-                    val arr2 = colPattern.reversed().subList(i, endIndex).reversed()
-                    if (diffBy(arr1, arr2) == 1) {
-                        colSolution += (colPattern.size - i)
-                        break
-                    }
-                }
-            }
+            colSolution += findMirror(colPattern)
         }
 
         return rowSolution + colSolution
+    }
+
+    private fun findMirror(pattern: List<String>): Int {
+        val maxNumber = pattern.size / 2 + 1
+
+        // from top to bottom
+        for (i in 1..maxNumber) {
+            val arr1 = pattern.take(i)
+            val endIndex = if (2 * i >= pattern.size - 1) {
+                pattern.size - 1
+            } else {
+                2 * i
+            }
+            val arr2 = pattern.subList(i, endIndex).reversed()
+            if (diffBy(arr1, arr2) == 1) {
+                return i
+            }
+        }
+
+        for (i in 1..maxNumber) {
+            val arr1 = pattern.reversed().take(i)
+            val endIndex = if (2 * i >= pattern.size - 1) {
+                pattern.size - 1
+            } else {
+                2 * i
+            }
+            val arr2 = pattern.reversed().subList(i, endIndex).reversed()
+            if (diffBy(arr1, arr2) == 1) {
+                return (pattern.size - i)
+            }
+        }
+        return 0
     }
 
     private fun diffBy(arr1: List<String>, arr2: List<String>): Int {
