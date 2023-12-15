@@ -36,3 +36,4 @@ function i.a.
 | 11  | Cosmic Expansion                | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day11.kt) [\[AoC\]](http://adventofcode.com/2023/day/11) |
 | 12  | Hot Springs                     | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day12.kt) [\[AoC\]](http://adventofcode.com/2023/day/12) |
 | 13  | Point of Incidence              | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day13.kt) [\[AoC\]](http://adventofcode.com/2023/day/13) |
+| 14  | Parabolic Reflector Dish        | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day14.kt) [\[AoC\]](http://adventofcode.com/2023/day/14) |
