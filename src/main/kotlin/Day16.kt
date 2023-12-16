@@ -5,6 +5,7 @@ import Orientation.WEST
 import utils.execFileByLineIndexed
 import utils.numberOfCharsPerLine
 import utils.numberOfLinesPerFile
+import utils.tree.TreeNode
 
 private enum class Orientation {
     NORTH, WEST, SOUTH, EAST
@@ -27,6 +28,7 @@ class Day16 {
     private val height = numberOfLinesPerFile(16)
 
     private val cave = Array(height) { CharArray(width) }
+    private var tree: TreeNode<Beam>? = null
 
     init {
         execFileByLineIndexed(16) { line, index ->
@@ -42,8 +44,11 @@ class Day16 {
                 Pair<Char, Orientation?>('.', null)
             }
         }
-        Beam(0, 0, EAST).run(energizedCave)
+        val beam = Beam(0, 0, EAST)
+        val tree = TreeNode(beam)
+        beam.run(energizedCave, tree)
 
+        tree.forEachDepthFirst { println(it.value) }
         return energizedCave.sumOf {
             it.count {
                 it.first == '#'
@@ -52,7 +57,8 @@ class Day16 {
     }
 
     fun solveSecond(): Int {
-        return runBeams()
+//        return runBeams()
+        return 0
     }
 
     private fun runBeams(): Int {
@@ -74,7 +80,7 @@ class Day16 {
                 }
                 val a = if (runParams[direction]!![0] == -1) i else runParams[direction]!![0]
                 val b = if (runParams[direction]!![1] == -1) i else runParams[direction]!![1]
-                Beam(a, b, direction).run(energizedCave)
+//                Beam(a, b, direction).run(energizedCave)
                 max = maxOf(max, energizedCave.sumOf {
                     it.count {
                         it.first == '#'
@@ -86,11 +92,15 @@ class Day16 {
     }
 
 
-    private fun Beam.run(energizedCave: Array<Array<Pair<Char, Orientation?>>>) {
+    private fun Beam.run(energizedCave: Array<Array<Pair<Char, Orientation?>>>, treeNode: TreeNode<Beam>) {
         energize(energizedCave)
         val nextBeams =
             getNextBeams().filter { it.inBounds() && !it.hasEnergizedAlready(energizedCave) }
-        nextBeams.forEach { it.run(energizedCave) }
+        nextBeams.forEach {
+            val new = TreeNode(it)
+            treeNode.add(new)
+            it.run(energizedCave, new)
+        }
     }
 
     private fun Beam.energize(energizedCave: Array<Array<Pair<Char, Orientation?>>>) {
