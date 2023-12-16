@@ -1,7 +1,7 @@
 import utils.execFileByLine
 
 class Day12 {
-    fun solveFirst() {
+    fun solveFirst(): Int {
         var sum = 0
         execFileByLine(12) {
             val record = it.substringBefore(" ")
@@ -23,22 +23,21 @@ class Day12 {
                 }
                 possibleSequences.add(String(rec))
             }
-            sum += possibleSequences.count {getGroupSizes(it) == defectives }
+            sum += possibleSequences.count { getGroupSizes(it) == defectives }
         }
-        println(sum)
+        return sum
+    }
+
+    fun solveSecond(): Int {
+        return -1
     }
 
     private fun getGroupSizes(inputString: String): List<Int> {
-        val regex = Regex("(#+)|\\.")
-        val matches = regex.findAll(inputString)
-        val groupSizes = mutableListOf<Int>()
-        for (match in matches) {
-            val value = match.value
-            if (value.contains("#")) {
-                groupSizes.add(value.length)
-            }
-        }
-        return groupSizes
+        return Regex("#+")
+            .findAll(inputString)
+            .map {
+                it.value.length
+            }.toList()
     }
 
 }
