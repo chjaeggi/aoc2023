@@ -38,3 +38,4 @@ function i.a.
 | 13  | Point of Incidence              | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day13.kt) [\[AoC\]](http://adventofcode.com/2023/day/13) |
 | 14  | Parabolic Reflector Dish        | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day14.kt) [\[AoC\]](http://adventofcode.com/2023/day/14) |
 | 15  | Lens Library                    | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day15.kt) [\[AoC\]](http://adventofcode.com/2023/day/15) |
+| 16  | The Floor Will Be Lava          | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day16.kt) [\[AoC\]](http://adventofcode.com/2023/day/16) |

@@ -56,7 +56,7 @@ fun numberOfLinesPerFile(number: Int): Int {
 }
 
 fun numberOfCharsPerLine(number: Int): Int {
-    val reader = BufferedReader(FileReader("./inputs/input$number.txt\""))
+    val reader = BufferedReader(FileReader("./inputs/input$number.txt"))
     val line = reader.readLine()
     reader.close()
     return line.length
