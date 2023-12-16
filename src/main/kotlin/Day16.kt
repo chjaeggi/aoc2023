@@ -37,72 +37,33 @@ class Day16 {
     }
 
     fun solveFirst(): Int {
-        val energizedCave = Array(height) {
-            Array(width) {
-                Pair<Char, Orientation?>('.', null)
-            }
-        }
-        Beam(0, 0, EAST).run(energizedCave)
-
-        return energizedCave.sumOf {
-            it.count {
-                it.first == '#'
-            }
-        }
+        val energizedFields =
+            Array(height) { Array<MutableList<Orientation>>(width) { mutableListOf() } }
+        Beam(0, 0, EAST).run(energizedFields)
+        return energizedFields.map { it.count { it.isNotEmpty() } }.sum()
     }
 
     fun solveSecond(): Int {
         return runBeams()
     }
 
-    private fun runBeams(): Int {
-        var max = 0
-
-        val runParams = mapOf(
-            EAST to listOf(0, -1, 0, height - 1),
-            SOUTH to listOf(-1, 0, 0, width),
-            NORTH to listOf(-1, height - 1, 0, width),
-            WEST to listOf(0, height - 1, 0, height)
-        )
-
-        Orientation.entries.forEach { direction ->
-            for (i in runParams[direction]!![2]..<runParams[direction]!![3]) {
-                val energizedCave = Array(height) {
-                    Array(width) {
-                        Pair<Char, Orientation?>('.', null)
-                    }
-                }
-                val a = if (runParams[direction]!![0] == -1) i else runParams[direction]!![0]
-                val b = if (runParams[direction]!![1] == -1) i else runParams[direction]!![1]
-                Beam(a, b, direction).run(energizedCave)
-                max = maxOf(max, energizedCave.sumOf {
-                    it.count {
-                        it.first == '#'
-                    }
-                })
-            }
-        }
-        return max
-    }
-
-
-    private fun Beam.run(energizedCave: Array<Array<Pair<Char, Orientation?>>>) {
-        energize(energizedCave)
+    private fun Beam.run(energizedFields: Array<Array<MutableList<Orientation>>>) {
+        energize(energizedFields)
         val nextBeams =
-            getNextBeams().filter { it.inBounds() && !it.hasEnergizedAlready(energizedCave) }
-        nextBeams.forEach { it.run(energizedCave) }
+            getNextBeams().filter { it.inBounds() && !it.hasEnergizedAlready(energizedFields) }
+        nextBeams.forEach { it.run(energizedFields) }
     }
 
-    private fun Beam.energize(energizedCave: Array<Array<Pair<Char, Orientation?>>>) {
-        energizedCave[y][x] = Pair('#', orientation)
+    private fun Beam.energize(energizedFields: Array<Array<MutableList<Orientation>>>) {
+        energizedFields[y][x].add(orientation)
     }
 
     private fun Beam.inBounds(): Boolean {
         return !(x < 0 || y < 0 || x > cave[0].lastIndex || y > cave.lastIndex)
     }
 
-    private fun Beam.hasEnergizedAlready(energizedCave: Array<Array<Pair<Char, Orientation?>>>): Boolean {
-        return energizedCave[y][x].second == orientation
+    private fun Beam.hasEnergizedAlready(energizedFields: Array<Array<MutableList<Orientation>>>): Boolean {
+        return energizedFields[y][x].contains(orientation)
     }
 
     private fun Beam.getNextBeams(): List<Beam> {
@@ -155,5 +116,28 @@ class Day16 {
                 }
             }
         }
+    }
+
+    private fun runBeams(): Int {
+        var max = 0
+
+        val runParams = mapOf(
+            EAST to listOf(0, -1, 0, height - 1),
+            SOUTH to listOf(-1, 0, 0, width),
+            NORTH to listOf(-1, height - 1, 0, width),
+            WEST to listOf(0, height - 1, 0, height)
+        )
+
+        Orientation.entries.forEach { direction ->
+            for (i in runParams[direction]!![2]..<runParams[direction]!![3]) {
+                val energizedFields =
+                    Array(height) { Array<MutableList<Orientation>>(width) { mutableListOf() } }
+                val a = if (runParams[direction]!![0] == -1) i else runParams[direction]!![0]
+                val b = if (runParams[direction]!![1] == -1) i else runParams[direction]!![1]
+                Beam(a, b, direction).run(energizedFields)
+                max = maxOf(max, energizedFields.map { it.count { it.isNotEmpty() } }.sum())
+            }
+        }
+        return max
     }
 }
