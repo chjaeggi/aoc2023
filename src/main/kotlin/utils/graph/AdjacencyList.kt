@@ -3,6 +3,8 @@ class AdjacencyList<T : Any> : Graph<T> {
     override val allVertices: ArrayList<Vertex<T>>
         get() = ArrayList(adjacencies.keys)
 
+    val vertices = allVertices
+
     private val adjacencies: HashMap<Vertex<T>, ArrayList<Edge<T>>> = HashMap()
 
     override fun createVertex(data: T): Vertex<T> {
