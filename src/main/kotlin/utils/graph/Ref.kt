@@ -1,1 +1,1 @@
-data class Ref<T: Any>(var value: T)
+data class Ref<T : Any>(var value: T)

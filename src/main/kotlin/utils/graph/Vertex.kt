@@ -1,1 +1,1 @@
-data class Vertex<T: Any>(val index: Int, val data: T)
+data class Vertex<T : Any>(val index: Int, val data: T)
