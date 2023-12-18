@@ -258,7 +258,7 @@ class Day5() {
                     .findNext(humidity2Location)
             )
         }
-        println(listOfLocations.min())
+        println(listOfLocations.minOf{ it })
     }
 
     fun solveSecond() {

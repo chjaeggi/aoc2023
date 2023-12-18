@@ -20,3 +20,16 @@ fun findLCM(a: Long, b: Long): Long {
     }
     return maxLcm
 }
+
+// sum of the cartesian products of the polygon
+// ("ring buffered" as the last will have a cross product of the first)
+fun shoelaceArea(vertices: List<Point2D>): Double {
+    val last = vertices.lastIndex
+    var area = 0.0
+    for (i in 0..<last) {
+        // sum up all the cross products until the last
+        area += vertices[i].x * vertices[i + 1].y - vertices[i + 1].x * vertices[i].y
+    }
+    // and now to the "overflow" back to the first and add the accumulated area
+    return Math.abs(area + vertices[last].x * vertices[0].y - vertices[0].x * vertices[last].y) / 2.0
+}

@@ -1,17 +1,9 @@
-import utils.execFileByLineIndexed
-import utils.numberOfCharsPerLine
-import utils.numberOfLinesPerFile
-import utils.transpose
+import utils.*
 import kotlin.math.abs
 
 
-data class GalaxyPoint(
-    val x: Int,
-    val y: Int
-)
-
 data class GalaxyMap(
-    val map: Map<GalaxyPoint, List<GalaxyPoint>>,
+    val map: Map<Point2D, List<Point2D>>,
     val galaxyFreeRows: List<Int>,
     val galaxyFreeCols: List<Int>,
 )
@@ -36,7 +28,7 @@ class Day11 {
         val originalGalaxies =
             Array(numberOfLinesPerFile(fileName)) { CharArray(numberOfCharsPerLine(fileName)) }
 
-        val galaxies = mutableMapOf<GalaxyPoint, List<GalaxyPoint>>()
+        val galaxies = mutableMapOf<Point2D, List<Point2D>>()
         val emptyRows = mutableListOf<Int>()
         val emptyCols = mutableListOf<Int>()
 
@@ -55,11 +47,11 @@ class Day11 {
             }
         }
 
-        val galaxyCoords = mutableListOf<GalaxyPoint>()
+        val galaxyCoords = mutableListOf<Point2D>()
         originalGalaxies.forEachIndexed { y, chars ->
             chars.forEachIndexed { x, c ->
                 if (c == '#') {
-                    galaxyCoords.add(GalaxyPoint(y, x))
+                    galaxyCoords.add(Point2D(y.toLong(), x.toLong()))
                 }
             }
         }
