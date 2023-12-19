@@ -1,3 +1,4 @@
+import Operator.GREATER_THAN
 import Status.REJECTED
 import Status.UNEVALUATED
 
@@ -31,11 +32,13 @@ private enum class Operator {
 
 private data class Workflow(
     val name: String,
+    val conditions: List<Condition>,
+    var currentCondition: Int = 0,
 )
 
 private data class Part(
-    val xmasMap : Map<Char, Int> =  mutableMapOf(),
-    val status: Status = UNEVALUATED
+    val xmasMap: Map<Char, Int> = mutableMapOf(),
+    var status: Status = UNEVALUATED
 )
 
 private data class Condition(
@@ -43,26 +46,42 @@ private data class Condition(
     val operator: Operator,
     val boundary: Int,
     val nextWorkFlow: String
-) {
-    fun nextWorkflowName(): String {
-        return ""
-    }
-}
+)
+
 class Day19 {
 
-    fun solveFirst() {
-        val parts = mutableListOf<Part>()
-        val acceptedParts = mutableListOf<Part>()
-        val conditions = mutableMapOf<Workflow, List<Condition>>()
-        val startWorkflow = Workflow("in")
+    fun solveFirst(): Int {
+
+        // read in parts
+        val parts = listOf<Part>()
+
+        // generateWorkflows()
+        val workflows = mapOf<String, Workflow>()
+        val startWorkflow = workflows["in"]
+
+        // parts.forEach { runWorkflows() }
+
+        return parts.filter { it.status == Status.ACCEPTED }.sumOf {
+            it.xmasMap.values.sum()
+        }
     }
 
-    private fun Part.runWorkflows() {
+    private fun Part.runWorkflow(workflow: Workflow) {
 
     }
 
     private fun runWorkflowHelper() {
 
+    }
+
+    private fun nextWorkflowName(workflow: Workflow): String {
+
+        if (workflow.conditions[workflow.currentCondition].operator == GREATER_THAN) {
+
+        } else {
+
+        }
+        return ""
     }
 
 }
