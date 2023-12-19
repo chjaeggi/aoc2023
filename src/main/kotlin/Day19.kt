@@ -1,6 +1,6 @@
 import Operator.GREATER_THAN
-import Status.REJECTED
 import Status.UNEVALUATED
+import utils.execFileByLine
 
 
 /*
@@ -32,37 +32,47 @@ private enum class Operator {
 
 private data class Workflow(
     val name: String,
-    val conditions: List<Condition>,
-    var currentCondition: Int = 0,
+    val conditions: Map<String, Condition>,
 )
 
 private data class Part(
-    val xmasMap: Map<Char, Int> = mutableMapOf(),
+    val xmas: Map<Char, Int>,
     var status: Status = UNEVALUATED
 )
 
 private data class Condition(
-    val xMasPart: Char,
-    val operator: Operator,
-    val boundary: Int,
-    val nextWorkFlow: String
+    val operator: Operator?,
+    val boundary: Int?,
+    val nextWorkflow: Workflow
 )
 
 class Day19 {
 
     fun solveFirst(): Int {
 
-        // read in parts
-        val parts = listOf<Part>()
+        val workflows = mutableMapOf<String, Workflow>()
+        val parts = mutableListOf<Part>()
 
-        // generateWorkflows()
-        val workflows = mapOf<String, Workflow>()
+        var isWorkflowLine = true
+        execFileByLine(19) {
+            if (it.isBlank() || it.isEmpty()) {
+                isWorkflowLine = false
+            } else {
+                val name = it.substringBefore("{")
+                val instructions = it.substringAfter("{").removeSuffix("}").split(",")
+                val conditions = instructions.map {
+                    
+                }
+            }
+        }
+
+
         val startWorkflow = workflows["in"]
 
         // parts.forEach { runWorkflows() }
 
         return parts.filter { it.status == Status.ACCEPTED }.sumOf {
-            it.xmasMap.values.sum()
+            it.xmas.values.sum()
         }
     }
 
@@ -70,17 +80,13 @@ class Day19 {
 
     }
 
-    private fun runWorkflowHelper() {
-
-    }
-
     private fun nextWorkflowName(workflow: Workflow): String {
 
-        if (workflow.conditions[workflow.currentCondition].operator == GREATER_THAN) {
-
-        } else {
-
-        }
+//        if (workflow.conditions[workflow.currentCondition].operator == GREATER_THAN) {
+//
+//        } else {
+//
+//        }
         return ""
     }
 
