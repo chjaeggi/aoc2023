@@ -3,8 +3,8 @@ import Operator.SMALLER_THAN
 import Status.*
 import utils.execFileByLine
 
-private enum class Status {
-    REJECTED, ACCEPTED, UNEVALUATED
+private enum class Status(value: String) {
+    REJECTED("R"), ACCEPTED("A"), UNEVALUATED("")
 }
 
 private fun String.toStatus(): Status = when (this) {
@@ -12,12 +12,6 @@ private fun String.toStatus(): Status = when (this) {
     "R" -> REJECTED
     else -> UNEVALUATED
 }
-
-private fun Status.toStatusString(): String = when (this) {
-    ACCEPTED, REJECTED -> this.name.first().toString()
-    else -> this.toString()
-}
-
 
 enum class Operator {
     GREATER_THAN, SMALLER_THAN
@@ -45,7 +39,7 @@ private data class Rule(
 
 class Day19 {
 
-    var solution = 0L
+    private var solution = 0L
 
     fun solveFirst(): Int {
         val (workflows, parts) = parseInput()
@@ -62,53 +56,50 @@ class Day19 {
 
     fun solveSecond(): Long {
         val (workflows) = parseInput()
-        val xmasRanges = mapOf(
+        val startRanges = mapOf(
             'x' to 1..4000,
             'm' to 1..4000,
             'a' to 1..4000,
             's' to 1..4000,
         )
 
-        runRangeForWorkflow(xmasRanges, workflows["in"]!!, workflows)
+        workflows["in"]!!.runRange(startRanges, workflows)
         return solution
     }
 
-    private fun runRangeForWorkflow(
+    private fun Workflow.runRange(
         startRanges: Map<Char, IntRange>,
-        workflow: Workflow,
         allWorkflows: Map<String, Workflow>,
     ) {
-
         // use BFS with if and else clause results see [adjustedRange]
-        val rangesQueue = ArrayDeque<Pair<String, Map<Char, IntRange>>>()
+        val workflowNameAndRangesQueue = ArrayDeque<Pair<String, Map<Char, IntRange>>>()
         var runningRanges: Map<Char, IntRange>? = null
-        for (rule in workflow.rules) {
-            runningRanges = if (runningRanges == null) {
-                rangesQueue.add(rule.nextWorkflowName to rule.adjustedRange(startRanges).first)
-                rule.adjustedRange(startRanges).second
-            } else {
-                rangesQueue.add(rule.nextWorkflowName to rule.adjustedRange(runningRanges).first)
-                rule.adjustedRange(runningRanges).second
-            }
+        for (rule in rules) {
+            val rangeToTest = runningRanges ?: startRanges
+            workflowNameAndRangesQueue.add(rule.nextWorkflowName to rule.adjustedRange(rangeToTest).first)
+            runningRanges = rule.adjustedRange(rangeToTest).second
         }
-        while (rangesQueue.isNotEmpty()) {
-            val rule = rangesQueue.removeFirst()
-            if (rule.first == "A") {
+        while (workflowNameAndRangesQueue.isNotEmpty()) {
+            val nextWorkflowNameAndRangesQueue = workflowNameAndRangesQueue.removeFirst()
+            if (nextWorkflowNameAndRangesQueue.first == "A") {
                 var product = 1L
-                rule.second.values.forEach {
+                nextWorkflowNameAndRangesQueue.second.values.forEach {
                     product *= it.last.toLong() - it.first.toLong() + 1
                 }
                 solution += product
                 continue
             }
-            if (rule.first == "R") {
+            if (nextWorkflowNameAndRangesQueue.first == "R") {
                 continue
             }
-            runRangeForWorkflow(rule.second, allWorkflows[rule.first]!!, allWorkflows)
+            allWorkflows[nextWorkflowNameAndRangesQueue.first]!!.runRange(
+                nextWorkflowNameAndRangesQueue.second,
+                allWorkflows
+            )
         }
     }
 
-    // return a pair of if to else case = range for the if-clause true and range for else-clause
+    // return a pair of if to else case = pair of range for the if-clause and range for else-clause
     private fun Rule.adjustedRange(map: Map<Char, IntRange>): Pair<Map<Char, IntRange>, Map<Char, IntRange>> {
         if (operator == null) {
             return map to map
@@ -121,19 +112,19 @@ class Day19 {
                     put(it, map[it]!!)
                 }
             } to buildMap {
-                put(xmasField!!, limit!!..<map[xmasField]!!.last+1)
+                put(xmasField!!, limit!!..<map[xmasField]!!.last + 1)
                 rest.forEach {
                     put(it, map[it]!!)
                 }
             }
         } else if (operator == GREATER_THAN) {
             return buildMap {
-                put(xmasField!!, limit!!+1..<map[xmasField]!!.last+1)
+                put(xmasField!!, limit!! + 1..<map[xmasField]!!.last + 1)
                 rest.forEach {
                     put(it, map[it]!!)
                 }
             } to buildMap {
-                put(xmasField!!, map[xmasField]!!.first..<limit!!+1)
+                put(xmasField!!, map[xmasField]!!.first..<limit!! + 1)
                 rest.forEach {
                     put(it, map[it]!!)
                 }
