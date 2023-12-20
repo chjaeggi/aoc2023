@@ -1,38 +1,34 @@
 import Operator.GREATER_THAN
-import Status.UNEVALUATED
+import Operator.SMALLER_THAN
+import Status.*
 import utils.execFileByLine
 
-
-/*
-px{a<2006:qkq,m>2090:A,rfg}
-pv{a>1716:R,A}
-lnx{m>1548:A,A}
-rfg{s<537:gd,x>2440:R,A}
-qs{s>3448:A,lnx}
-qkq{x<1416:A,crn}
-crn{x>2662:A,R}
-in{s<1351:px,qqz}
-qqz{s>2770:qs,m<1801:hdj,R}
-gd{a>3333:R,R}
-hdj{m>838:A,pv}
-
-{x=787,m=2655,a=1222,s=2876}
-{x=1679,m=44,a=2067,s=496}
-{x=2036,m=264,a=79,s=2244}
-{x=2461,m=1339,a=466,s=291}
-{x=2127,m=1623,a=2188,s=1013}
- */
 private enum class Status {
     REJECTED, ACCEPTED, UNEVALUATED
 }
 
-private enum class Operator {
+private fun String.toStatus(): Status = when (this) {
+    "A" -> ACCEPTED
+    "R" -> REJECTED
+    else -> UNEVALUATED
+}
+
+private fun Status.toStatusString(): String = when (this) {
+    ACCEPTED, REJECTED -> this.name.first().toString()
+    else -> this.toString()
+}
+
+
+enum class Operator {
     GREATER_THAN, SMALLER_THAN
 }
 
+private fun Char.toOperator(): Operator = if (this == '<') SMALLER_THAN else GREATER_THAN
+
+
 private data class Workflow(
     val name: String,
-    val conditions: Map<String, Condition>,
+    val rules: List<Rule>,
 )
 
 private data class Part(
@@ -40,54 +36,159 @@ private data class Part(
     var status: Status = UNEVALUATED
 )
 
-private data class Condition(
+private data class Rule(
+    val xmasField: Char?,
     val operator: Operator?,
-    val boundary: Int?,
-    val nextWorkflow: Workflow
+    val limit: Int?,
+    val nextWorkflowName: String
 )
 
 class Day19 {
 
+    var solution = 0L
+
     fun solveFirst(): Int {
-
-        val workflows = mutableMapOf<String, Workflow>()
-        val parts = mutableListOf<Part>()
-
-        var isWorkflowLine = true
-        execFileByLine(19) {
-            if (it.isBlank() || it.isEmpty()) {
-                isWorkflowLine = false
-            } else {
-                val name = it.substringBefore("{")
-                val instructions = it.substringAfter("{").removeSuffix("}").split(",")
-                val conditions = instructions.map {
-                    
-                }
-            }
-        }
-
-
+        val (workflows, parts) = parseInput()
         val startWorkflow = workflows["in"]
 
-        // parts.forEach { runWorkflows() }
+        parts.forEach {
+            it.runWorkflow(startWorkflow!!, workflows)
+        }
 
-        return parts.filter { it.status == Status.ACCEPTED }.sumOf {
+        return parts.filter { it.status == ACCEPTED }.sumOf {
             it.xmas.values.sum()
         }
     }
 
-    private fun Part.runWorkflow(workflow: Workflow) {
+    fun solveSecond(): Long {
+        val (workflows) = parseInput()
+        val startWorkflow = workflows["in"]
+        val xmasRanges = mutableMapOf(
+            'x' to 1..4001,
+            'm' to 1..4001,
+            'a' to 1..4001,
+            's' to 1..4001,
+        )
 
+        startWorkflow!!.runForRange(xmasRanges, workflows)
+        println(solution)
+        return 0L
     }
 
-    private fun nextWorkflowName(workflow: Workflow): String {
-
-//        if (workflow.conditions[workflow.currentCondition].operator == GREATER_THAN) {
-//
-//        } else {
-//
-//        }
-        return ""
+    private fun Workflow.runForRange(
+        xmasRanges: MutableMap<Char, IntRange>,
+        workflows: Map<String, Workflow>
+    ) {
+        for (rule in rules) {
+            rule.adjustRange(xmasRanges)
+            if (rule.nextWorkflowName == "A") {
+                println(xmasRanges)
+                var product = 1L
+                xmasRanges.values.forEach {
+                    product *= it.last.toLong() - it.first.toLong()
+                }
+                println(product)
+                solution += product
+                return
+            }
+            if (rule.nextWorkflowName == "R") {
+                return
+            }
+            workflows[rule.nextWorkflowName]!!.runForRange(xmasRanges, workflows)
+        }
     }
 
+
+    private fun Rule.adjustRange(map: MutableMap<Char, IntRange>) {
+        if (operator == SMALLER_THAN) {
+            map[xmasField!!] =
+                map[xmasField]!!.first..<limit!!
+        } else if (operator == GREATER_THAN) {
+            map[xmasField!!] =
+                limit!!..<map[xmasField]!!.last
+        }
+    }
+
+    private fun Part.runWorkflow(current: Workflow, workflows: Map<String, Workflow>) {
+        for (rule in current.rules) {
+            if (this.status == UNEVALUATED && evaluateRule(rule)) {
+                val next = rule.nextWorkflowName
+                if (next.toStatus() == REJECTED || next.toStatus() == ACCEPTED) {
+                    status = next.toStatus()
+                    break
+                } else {
+                    runWorkflow(workflows[next]!!, workflows)
+                }
+            }
+        }
+    }
+
+    private fun Part.evaluateRule(rule: Rule): Boolean {
+        if (rule.xmasField == null || rule.limit == null || rule.operator == null) {
+            return true
+        }
+        if (rule.operator == GREATER_THAN) {
+            if (xmas[rule.xmasField]!! > rule.limit) {
+                return true
+            }
+        } else {
+            if (xmas[rule.xmasField]!! < rule.limit) {
+                return true
+            }
+        }
+        return false
+    }
+
+
+    private fun parseInput(): Pair<Map<String, Workflow>, List<Part>> {
+        var isWorkflowLine = true
+        val workflows = mutableMapOf<String, Workflow>()
+        val parts = mutableListOf<Part>()
+
+        execFileByLine(19) {
+            if (it.isBlank()) {
+                isWorkflowLine = false
+            } else {
+                if (isWorkflowLine) {
+                    val name = it.substringBefore("{")
+                    val instructions = it.substringAfter("{")
+                        .removeSuffix("}")
+                        .split(",")
+                    val rules = instructions.flatMap {
+                        if (it.contains(":")) {
+                            it.split(",").map {
+                                Rule(
+                                    it[0],
+                                    it[1].toOperator(),
+                                    it.substring(2, it.indexOfFirst { it == ':' }).toInt(),
+                                    it.substringAfter(":")
+                                )
+                            }
+                        } else {
+                            listOf(Rule(null, null, null, it))
+                        }
+                    }
+                    workflows[name] = Workflow(name, rules)
+                } else {
+                    val groups = it.removeSuffix("}").removePrefix("{").split(',')
+                    val xValue = groups[0].substringAfter("=").toInt()
+                    val mValue = groups[1].substringAfter("=").toInt()
+                    val aValue = groups[2].substringAfter("=").toInt()
+                    val sValue = groups[3].substringAfter("=").toInt()
+
+                    parts.add(
+                        Part(
+                            xmas = mapOf(
+                                'x' to xValue,
+                                'm' to mValue,
+                                'a' to aValue,
+                                's' to sValue
+                            )
+                        )
+                    )
+                }
+            }
+        }
+        return workflows to parts
+    }
 }

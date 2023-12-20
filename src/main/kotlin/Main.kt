@@ -1,5 +1,5 @@
 fun main() {
-    val day = Day18()
+    val day = Day19()
     println(day.solveFirst())
     println(day.solveSecond())
 }
