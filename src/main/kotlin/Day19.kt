@@ -62,51 +62,77 @@ class Day19 {
 
     fun solveSecond(): Long {
         val (workflows) = parseInput()
-        val startWorkflow = workflows["in"]
-        val xmasRanges = mutableMapOf(
+        val xmasRanges = mapOf(
             'x' to 1..4001,
             'm' to 1..4001,
             'a' to 1..4001,
             's' to 1..4001,
         )
 
-        startWorkflow!!.runForRange(xmasRanges, workflows)
+        runRangeForWorkflow(xmasRanges, workflows["in"]!!, workflows)
         println(solution)
         return 0L
     }
 
-    private fun Workflow.runForRange(
-        xmasRanges: MutableMap<Char, IntRange>,
-        workflows: Map<String, Workflow>
-    ) {
-        for (rule in rules) {
-            rule.adjustRange(xmasRanges)
-            if (rule.nextWorkflowName == "A") {
-                println(xmasRanges)
-                var product = 1L
-                xmasRanges.values.forEach {
-                    product *= it.last.toLong() - it.first.toLong()
-                }
-                println(product)
-                solution += product
-                return
-            }
-            if (rule.nextWorkflowName == "R") {
-                return
-            }
-            workflows[rule.nextWorkflowName]!!.runForRange(xmasRanges, workflows)
+    private fun runRangeForWorkflow(
+        xmasRanges: Map<Char, IntRange>,
+        workflow: Workflow,
+        allWorkflows: Map<String, Workflow>,
+        ) {
+
+        val rangesQueue = ArrayDeque<Pair<String,Map<Char, IntRange>>>()
+        val inverseMap: Map<Char, IntRange>?
+        for ((index, rule) in workflow.rules.withIndex()) {
+            rangesQueue.add(rule.nextWorkflowName to rule.adjustedRange(xmasRanges))
+            inverseMap = rangesInversed()
         }
+//        for (rule in rules) {
+//            if (rule.nextWorkflowName == "A") {
+//                println(xmasRanges)
+//                var product = 1L
+//                xmasRanges.values.forEach {
+//                    product *= it.last.toLong() - it.first.toLong()
+//                }
+//                println(product)
+//                solution += product
+//                continue
+//            }
+//            if (rule.nextWorkflowName == "R") {
+//                println("0")
+//                continue
+//            }
+//            val ifRange = rule.adjustRange(xmasRanges)
+//            println("running worflow: ${this.name} with $ifRange for rule $rule now")
+//            allWorkflows[rule.nextWorkflowName]!!.runForRange(ifRange, allWorkflows)
+//        }
+    }
+
+    private fun rangesInversed(map: Map<Char, IntRange>): Map<Char, IntRange> {
+        return map
     }
 
 
-    private fun Rule.adjustRange(map: MutableMap<Char, IntRange>) {
-        if (operator == SMALLER_THAN) {
-            map[xmasField!!] =
-                map[xmasField]!!.first..<limit!!
-        } else if (operator == GREATER_THAN) {
-            map[xmasField!!] =
-                limit!!..<map[xmasField]!!.last
+    private fun Rule.adjustedRange(map: Map<Char, IntRange>): Map<Char, IntRange> {
+        if (operator == null) {
+            return map
         }
+        val rest = "xmas".filterNot { it == xmasField }
+        if (operator == SMALLER_THAN) {
+            return buildMap {
+                put(xmasField!!, map[xmasField]!!.first..<limit!!)
+                rest.forEach {
+                    put(it, map[it]!!)
+                }
+            }
+        } else if (operator == GREATER_THAN) {
+            return buildMap {
+                put(xmasField!!, limit!!..<map[xmasField]!!.last)
+                rest.forEach {
+                    put(it, map[it]!!)
+                }
+            }
+        }
+        throw IllegalStateException("not possible")
     }
 
     private fun Part.runWorkflow(current: Workflow, workflows: Map<String, Workflow>) {
