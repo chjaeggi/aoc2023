@@ -40,4 +40,5 @@ function i.a.
 | 15  | Lens Library                    | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day15.kt) [\[AoC\]](http://adventofcode.com/2023/day/15) |
 | 16  | The Floor Will Be Lava          | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day16.kt) [\[AoC\]](http://adventofcode.com/2023/day/16) |
 | 17  | Clumsy Crucible                 | [\[AoC\]](http://adventofcode.com/2023/day/17)                                                                                    |
-| 18  | Lavaduct Lagoon                 | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day16.kt) [\[AoC\]](http://adventofcode.com/2023/day/18) |
+| 18  | Lavaduct Lagoon                 | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day18.kt) [\[AoC\]](http://adventofcode.com/2023/day/18) |
+| 19  | Aplenty                         | [\[Code\]](https://github.com/chjaeggi/aoc2023/blob/main/src/main/kotlin/Day19.kt) [\[AoC\]](http://adventofcode.com/2023/day/18) |
